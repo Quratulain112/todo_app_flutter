@@ -24,9 +24,10 @@ class _MyAppState extends State<MyApp> {
     }
     setState(() {
       todotasks = storetask!;
-      for (String t in todotasks) {
-        bool isDone = (t.split(', ')[1] == "1") ? true : false;
-        marklist.add(isDone);
+      for (var task in todotasks) {
+        List<String> value = task.split(', ');
+        bool mark = (value[1] == '1') ? true : false;
+        marklist.add(mark);
       }
     });
   }
@@ -68,7 +69,7 @@ class _MyAppState extends State<MyApp> {
                     trailing: IconButton(
                         onPressed: () {
                           setState(() {
-                            todotasks.add(createtaskcontroller.text);
+                            todotasks.add(createtaskcontroller.text + ", 0");
                             marklist.add(false);
                             createtaskcontroller.clear();
                             save();
@@ -83,12 +84,17 @@ class _MyAppState extends State<MyApp> {
                 itemBuilder: (context, index) {
                   return Card(
                     child: ListTile(
-                      title: Text(todotasks[index]),
+                      title: Text(todotasks[index].split(', ')[0]),
                       leading: Checkbox(
                         value: marklist[index],
                         onChanged: (value) {
                           setState(() {
                             marklist[index] = value!;
+                            String task = todotasks[index];
+                            String markvalue = (value == true) ? "1" : "0";
+                            todotasks[index] =
+                                task.replaceFirst(RegExp(r'0|1'), markvalue);
+                            save();
                           });
                         },
                       ),
